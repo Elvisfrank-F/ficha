@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'client.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:convert';
 
 void main(){
   runApp(MyApp());
@@ -36,24 +39,113 @@ class _HomePageState extends State<HomePage> {
 
   List<Map<String, dynamic>> listClient = [];
   List<Map<String, dynamic>> listReClient = [];
+
+  @override
+  void initState(){
+    super.initState();
+
+    _loadData();
+
+    
+
+
+  }
+
+  //função para deletar o client
+
+  void _deleteClient(String name){
+
+    setState(() {
+      
+      listClient.removeWhere((client) => client['name'] == name);
+      listReClient.removeWhere((client) => client['name'] == name);
+
+    });
+
+    __saveData();
+  }
    
    
+   //função para puxar o arquivo que contem as informações do cliente
+
+   Future<File> _getFile() async {
+
+    final dataBaseDir = await getApplicationDocumentsDirectory();
+    final customDB = Directory("${dataBaseDir.path}/FichaDir");
+     
+     if(!await customDB.exists()){
+      await customDB.create(recursive: true);
+
+     }
+
+     return File("${customDB.path}/dataFicha.json");
+
+
+   
+   }
+
+   //função que insere os dados no arquivo
+   Future<File> __saveData() async{
+    String data = json.encode(listClient);
+    final file = await _getFile();
+    return file.writeAsString(data);
+   }
+
+   //função que le os dados do arquivo
+   
+   Future<String> _readData() async {
+    try{
+      final file = await _getFile();
+
+    if(await file.exists()){
+        return file.readAsString();
+
+    }
+    else {
+      return "[]";
+    }
+    
+    }
+
+    catch(e){
+      return "[]";
+    }
+   }
+
+   //função que "baixa" os dados do arquivo para a list de clientes
+
+   void _loadData() async{
+    
+    String data = await _readData();
+
+   
+      setState(() {
+         listClient = List<Map<String, dynamic>>.from(json.decode(data));
+      });
+     
+    }
+   
+
+
+
+   //criar cliente
   
 
   void CreateClient(String name, double divida, String endereco) {
 
-    Client cliente = new Client(divida: divida, name: name, endereco: endereco);
+    //Client cliente = new Client(divida: divida, name: name, endereco: endereco);
 
-    var logger = Logger();
+   // var logger = Logger();
+
+    Map<String, dynamic> novoClient = {
+     'name': name,
+     'divida': divida,
+     'endereco': endereco
+    };
 
 
  setState(() {
-   listClient.add({
-    'name': name,
-    'divida' : divida,
-    'endereco' : endereco,
-   }
-   );
+   listClient.add(novoClient);
    listReClient = List.from(listClient);
  });
 
@@ -61,7 +153,7 @@ class _HomePageState extends State<HomePage> {
  _controllerEndereco.clear();
  _controllerName.clear();
     
-
+ __saveData();
    
   }
 
@@ -198,70 +290,73 @@ listClient = resultado;
          
         ],
       ),
-      body: LayoutBuilder(
-
-        builder: (context, constraints) {
-
-   
-        return  Center(
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 10,),
-                  Container(
-                    width: constraints.maxWidth * 0.9,
-          
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: const Color.fromARGB(255, 142, 206, 211)
-                    ),
-                    child: TextField(
-                      onChanged: _search,
-                      
-                      decoration: InputDecoration(
+      body: SafeArea(
+        child: LayoutBuilder(
+        
+          builder: (context, constraints) {
+        
+           
+          return  Center(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    Container(
+                      width: constraints.maxWidth * 0.9,
+            
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color.fromARGB(255, 142, 206, 211)
+                      ),
+                      child: TextField(
+                        onChanged: _search,
                         
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Icon(Icons.search, color: Colors.white, size: 30),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide(
-                            color: Colors.red
+                        decoration: InputDecoration(
+                          
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Icon(Icons.search, color: Colors.white, size: 30),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(
+                              color: Colors.red
+                            )
                           )
-                        )
+                        ),
                       ),
                     ),
-                  ),
-
-                  SizedBox(height: 30,),
-
-                  
-
-                  SizedBox(
-                    height: 320,
-                    width: constraints.maxWidth * 0.9,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: listClient.length,
-                      itemBuilder: (context, index){
-                        final client = listClient[index];
-                        return Client(
-                          name: client['name'],
-                          divida: client['divida'],
-                          endereco: client['endereco'],
-                          key: ValueKey(client['name']),
-                        );
-                      },
-                                    ),
-                  ),
-        ])
+        
+                    SizedBox(height: 30,),
+        
+                    
+        
+                    SizedBox(
+                      height: 320,
+                      width: constraints.maxWidth * 0.9,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listClient.length,
+                        itemBuilder: (context, index){
+                          final client = listClient[index];
+                          return Client(
+                            onDelete: () => _deleteClient(client['name'] as String? ?? ''),
+                            name: client['name'] as String? ?? 'Nome Desconhecido',
+                            divida: client['divida'] as double? ?? 0.0,
+                            endereco: client['endereco'] as String? ?? 'Endereoço desconhecido',
+                            key: ValueKey(client['name']),
+                          );
+                        },
+                                      ),
+                    ),
+          ])
+              ),
             ),
-          ),
-        );
-        }
+          );
+          }
+        ),
       )
     );
   }

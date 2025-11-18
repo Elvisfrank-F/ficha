@@ -6,11 +6,12 @@ class Client extends StatefulWidget {
   final String name;
   final double divida;
   final String endereco;
+  final VoidCallback onDelete;
 
-  const Client({super.key, required  this.name, required this.divida, required this.endereco});
+  const Client({super.key, required  this.name, required this.divida, required this.endereco, required this.onDelete});
 
   @override
-  State<Client> createState() => _ClientState(name: name, divida: divida, endereco: endereco);
+  State<Client> createState() => _ClientState(name: name, divida: divida, endereco: endereco, onDelete: onDelete);
 }
 
 class _ClientState extends State<Client> {
@@ -18,12 +19,13 @@ class _ClientState extends State<Client> {
   String name;
   double divida;
   String endereco;
+  VoidCallback onDelete;
 
    TextEditingController _controllerName = new TextEditingController();
    TextEditingController _controllerDivida = new TextEditingController();
    TextEditingController _controllerEndereco = new TextEditingController();
 
-  _ClientState({required  this.name, required this.divida, required this.endereco});
+  _ClientState({required  this.name, required this.divida, required this.endereco, required this.onDelete});
 
   @override
   void initState() {
@@ -51,7 +53,12 @@ class _ClientState extends State<Client> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [ 
 
-                  Icon(Icons.remove_circle_outline, size: 35),
+                  GestureDetector(
+                    onTap: onDelete,
+                  child:  Icon(Icons.remove_circle_outline, size: 35),
+                  ),
+
+                 
                   
                   GestureDetector(
                      onTap: () => showDialog<String>(
