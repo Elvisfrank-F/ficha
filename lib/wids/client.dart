@@ -12,9 +12,13 @@ class Client extends StatefulWidget {
 
   @override
   State<Client> createState() => _ClientState(name: name, divida: divida, endereco: endereco, onDelete: onDelete);
+
+
 }
 
 class _ClientState extends State<Client> {
+
+
 
   String name;
   double divida;
@@ -26,6 +30,15 @@ class _ClientState extends State<Client> {
    TextEditingController _controllerEndereco = new TextEditingController();
 
   _ClientState({required  this.name, required this.divida, required this.endereco, required this.onDelete});
+
+
+ Map<String, dynamic> getClients(){
+    return {
+      "name" :  name,
+      "divida"  : divida,
+      "endereco" : endereco
+    };
+  }
 
   @override
   void initState() {
