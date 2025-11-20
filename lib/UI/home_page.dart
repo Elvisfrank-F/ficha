@@ -389,54 +389,56 @@ class _HomePageState extends State<HomePage> {
                         content:  SizedBox(
                           height: 300,
                           width: 300,
-                          child: Column(
+                          child: SingleChildScrollView(
+                            child: Column(
 
-                            children: [
-                              TextField(
-                                  controller: _controllerName,
-                                  keyboardType: TextInputType.name,
-                                  decoration: InputDecoration(
-                                      label: Text('Nome'),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10)
-                                      )
-                                  )
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TextField(
-                                  controller: _controllerDivida,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                      label: Text('Valor da dívida'),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10)
-                                      )
-                                  )
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TextField(
-                                  controller: _controllerEndereco,
-                                  keyboardType: TextInputType.streetAddress,
-                                  decoration: InputDecoration(
-                                      label: Text('Endereço'),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10)
-                                      )
-                                  )
-                              ),
-                              SizedBox(height: 30,),
-                              GestureDetector(
-                                child: Expanded(child: Column(children: [
-                                
-                                  Icon(Icons.account_circle_rounded, size: 80),
-                                  Text("Clique para adicionar uma foto")
-                                ],)),
-                              )
-                            ],
+                              children: [
+                                TextField(
+                                    controller: _controllerName,
+                                    keyboardType: TextInputType.name,
+                                    decoration: InputDecoration(
+                                        label: Text('Nome'),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                        )
+                                    )
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextField(
+                                    controller: _controllerDivida,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                        label: Text('Valor da dívida'),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                        )
+                                    )
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextField(
+                                    controller: _controllerEndereco,
+                                    keyboardType: TextInputType.streetAddress,
+                                    decoration: InputDecoration(
+                                        label: Text('Endereço'),
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                        )
+                                    )
+                                ),
+                               SizedBox(height: 3,),
+                                GestureDetector(
+                                  child: Expanded(child: Column(children: [
+                                  
+                                    Icon(Icons.account_circle_rounded, size: 80),
+                                    Text("Clique para adicionar uma foto")
+                                  ],)),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                         actions: <Widget>[
@@ -467,10 +469,10 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           child: SingleChildScrollView(
             child: LayoutBuilder(
-            
+
                 builder: (context, constraints) {
-            
-            
+
+
                   return  Center(
                     child: Container(
                       child: Padding(
@@ -480,7 +482,7 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(height: 10,),
                                 Container(
                                   width: constraints.maxWidth * 0.9,
-            
+
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       color:listPreferences['isDark']? const Color.fromARGB(
@@ -488,9 +490,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   child: TextField(
                                     onChanged: _search,
-            
+
                                     decoration: InputDecoration(
-            
+
                                         prefixIcon: Padding(
                                           padding: EdgeInsets.symmetric(horizontal: 15),
                                           child: Icon(Icons.search, color: Colors.white, size: 30),
@@ -504,17 +506,18 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
-            
+
                                 SizedBox(height: 30,),
-            
-            
-            
+
+
+
                                 SizedBox(
-                                  height: 320,
+                                  height: constraints.maxHeight< 800?  320: 360,
                                   width: constraints.maxWidth * 0.9,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: listClient.length,
+
                                     itemBuilder: (context, index){
                                       final client = listClient[index];
                                       return Client(
@@ -532,7 +535,7 @@ class _HomePageState extends State<HomePage> {
 
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text("FILTRO $filtroStr APLICADO",
+                                  child: listClient.isEmpty? Text("") : Text("FILTRO $filtroStr APLICADO",
                                       style: TextStyle(fontSize: 20)),
                                 ),
 
@@ -543,6 +546,7 @@ class _HomePageState extends State<HomePage> {
 
                                   child: ListView.builder( scrollDirection: Axis.vertical,
                                      itemCount: listSubclient.length,
+                                      physics: NeverScrollableScrollPhysics() ,
                                       itemBuilder: (context, index)
                                   {
                                    final client = listSubclient[index];
@@ -550,7 +554,7 @@ class _HomePageState extends State<HomePage> {
                                    return Padding(
                                      padding: const EdgeInsets.only(top:1.0),
                                      child: SizedBox(
-                                         height: 100,
+                                         height: 120,
                                          width: constraints.maxWidth*0.9,
 
                                        child: Subclient(name: client['name'],
@@ -566,9 +570,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
 
 
-            
-            
-            
+
+
+
                               ])
                       ),
                     ),

@@ -61,18 +61,19 @@ class _ClientState extends State<Client> {
           width: 230,
           
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [ 
+                children: [
 
                   GestureDetector(
                     onTap: onDelete,
                   child:  Icon(Icons.remove_circle_outline, size: 35),
                   ),
 
-                 
-                  
+
+
                   GestureDetector(
                      onTap: () => showDialog<String>(
                       context: context,
@@ -124,10 +125,10 @@ class _ClientState extends State<Client> {
                   ],
                 ),
               ),
-                            
-                          
-                       
-                        
+
+
+
+
                         actions: [
                           TextButton(child: Text("Cancelar"), onPressed: () => Navigator.pop(context, "Cancelar")),
                           TextButton(child: Text("Aplicar"), onPressed: () {
@@ -137,15 +138,15 @@ class _ClientState extends State<Client> {
                             divida = double.tryParse(_controllerDivida.text) ?? 0;
                             endereco = _controllerEndereco.text;
                             });
-                          
+
                              Navigator.pop(context, 'Aplicar');
-                             
+
                              }),
                         ]
                       ),
 
                      ),
-                    
+
                     child: Container(
                     height: 30,
                     width: 30,
@@ -160,7 +161,7 @@ class _ClientState extends State<Client> {
                     child: Icon(Icons.edit)),
                   ),],
               ),
-             
+
               SizedBox(height: 10),
               Icon(Icons.account_circle, size: 100),
               SizedBox(height: 20,),
@@ -171,7 +172,7 @@ class _ClientState extends State<Client> {
               Text("R\$$srtDivida", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))
 
 
-              
+
 
             ],
           )),
