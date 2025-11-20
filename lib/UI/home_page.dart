@@ -547,7 +547,7 @@ class _HomePageState extends State<HomePage> {
                                   child: ListView.builder( scrollDirection: Axis.vertical,
                                      itemCount: listSubclient.length,
                                       physics: NeverScrollableScrollPhysics() ,
-                                      itemBuilder: (context, index) erereyryrtyurtyu
+                                      itemBuilder: (context, index)
                                   {
                                    final client = listSubclient[index];
 
