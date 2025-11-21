@@ -69,7 +69,7 @@ class _ClientState extends State<Client> {
 
                   GestureDetector(
                     onTap: onDelete,
-                  child:  Icon(Icons.remove_circle_outline, size: 35),
+                  child:  Icon(Icons.delete, size: 35),
                   ),
 
 
@@ -122,6 +122,13 @@ class _ClientState extends State<Client> {
                         )
                       )
                     ),
+                    GestureDetector(
+                      child: Expanded(child: Column(children: [
+
+                        Icon(Icons.account_circle_rounded, size: 80),
+                        Text("Clique para adicionar uma foto")
+                      ],)),
+                    )
                   ],
                 ),
               ),

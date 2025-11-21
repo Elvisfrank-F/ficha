@@ -78,20 +78,48 @@ class _HomePageState extends State<HomePage> {
 
 
   }
-
   //função para deletar o client
 
-  void _deleteClient(String name){
 
-    setState(() {
+  void _deleteClient(String name, BuildContext context){
 
-      listClient.removeWhere((client) => client['name'] == name);
-      listReClient.removeWhere((client) => client['name'] == name);
-      listSubclient.removeWhere((client) => client['name'] ==name);
+    showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog (
+   title: FittedBox(
+     fit: BoxFit.scaleDown,
+       child: Text("Tem certeza que deseja apagar o cliente $name?",
+       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+      content: Container(
+        child: FittedBox(
+            fit:BoxFit.scaleDown,
+            child: Text("esta ação irá apagar permanentemente os dados", )),
+       // style: TexEStyle(fontSize: 22)),
+      ),
 
-    });
+      actions: <Widget>[
+        TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancelar", style: TextStyle(color: Colors.green),)),
+        TextButton(onPressed: (){
 
-    _saveData();
+          setState(() {
+
+            listClient.removeWhere((client) => client['name'] == name);
+            listReClient.removeWhere((client) => client['name'] == name);
+            listSubclient.removeWhere((client) => client['name'] ==name);
+
+          });
+
+          _saveData();
+
+          Navigator.pop(context);
+
+        }, child: Text("Apagar", style: TextStyle(color: Colors.red),))
+      ],
+  )
+
+    );
+
+
   }
 
 
@@ -325,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                           }
                           else if(filter == "menor" && cond){
                             listSubclient.sort((a,b){
-                              filtroStr = "\"MENOR PARA O maior\"";
+                              filtroStr = "\"MENOR PARA O MAIOR\"";
                               if(a['divida'] > b['divida']) return 1;
                               else if(a['divida'] < b['divida']) return -1;
                               else return 0;
@@ -333,6 +361,9 @@ class _HomePageState extends State<HomePage> {
                           }
                           else {
                             listSubclient = List.from(listClient);
+                            filtroStr = "";
+
+
                           }
                         });
                         _savePreferences();
@@ -424,6 +455,9 @@ class _HomePageState extends State<HomePage> {
                                     keyboardType: TextInputType.streetAddress,
                                     decoration: InputDecoration(
                                         label: Text('Endereço'),
+                                        suffix: IconButton(icon: Icon(Icons.edit), onPressed: (){
+                                          print("clicou");
+                                        },),
                                         border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(10)
                                         )
@@ -521,7 +555,7 @@ class _HomePageState extends State<HomePage> {
                                     itemBuilder: (context, index){
                                       final client = listClient[index];
                                       return Client(
-                                        onDelete: () => _deleteClient(client['name'] as String? ?? ''),
+                                        onDelete: () => _deleteClient(client['name'] as String? ?? '', context),
                                         name: client['name'] as String? ?? 'Nome Desconhecido',
                                         divida: client['divida'] as double? ?? 0.0,
                                         endereco: client['endereco'] as String? ?? 'Endereoço desconhecido',
@@ -533,10 +567,13 @@ class _HomePageState extends State<HomePage> {
                                 ),
 
 
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: listClient.isEmpty? Text("") : Text("FILTRO $filtroStr APLICADO",
-                                      style: TextStyle(fontSize: 20)),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top:20, bottom: 10, left: 5, right: 5),
+                                    child: listClient.isEmpty? Text("") : (!listPreferences['isBiggerFilter'] && !listPreferences['isSmallerFilter'])? Text("SEM FILTRO APLICADO") : Text("FILTRO: $filtroStr APLICADO",
+                                        style: TextStyle(fontSize: 20)),
+                                  ),
                                 ),
 
                                 //listar os subclients
@@ -546,7 +583,7 @@ class _HomePageState extends State<HomePage> {
 
                                   child: ListView.builder( scrollDirection: Axis.vertical,
                                      itemCount: listSubclient.length,
-                                      physics: NeverScrollableScrollPhysics() ,
+                                      //physics: NeverScrollableScrollPhysics() ,
                                       itemBuilder: (context, index)
                                   {
                                    final client = listSubclient[index];
